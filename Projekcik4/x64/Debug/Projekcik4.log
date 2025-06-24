@@ -1,2 +1,9 @@
 ﻿  Projekcik4.cpp
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(75,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(82,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(89,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(96,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(104,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(223,44): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\konek\source\repos\Projekcik4\Projekcik4.cpp(236,44): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   Projekcik4.vcxproj -> C:\Users\konek\source\repos\Projekcik4\x64\Debug\Projekcik4.exe

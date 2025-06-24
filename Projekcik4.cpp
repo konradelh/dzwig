@@ -1,11 +1,21 @@
 #include <windows.h>
 #include <gdiplus.h>
+#include <vector>
 #pragma comment(lib, "gdiplus.lib")
 using namespace Gdiplus;
 
-RECT objekt = { 275, 295, 325, 345 };
-bool moving = false;
-int ksztalt;
+std::vector<RECT> objekty;
+int ktory = 0;
+bool movingleft = false;
+bool movingright = false;
+bool movingup = false;
+bool movingdown = false;
+bool wieza_ktk = false;
+bool wieza_kkt = false;
+bool wieza_1 = false;
+bool wieza_2 = false;
+bool wieza_3 = false;
+std::vector<int> ksztalt;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -13,37 +23,238 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
     case WM_COMMAND:
     {
+        RECT nowy = { 285, 320, 310, 345 };
         if (LOWORD(wParam) == 1) 
         {
-            if (!moving) 
+            if (!movingleft) 
             {
-                moving = true;
-                SetTimer(hwnd, 1, 30, nullptr);
+                movingleft = true;
+                movingright = false;
+                movingup = false;
+                movingdown = false;
+                SetTimer(hwnd, 1, 1, nullptr);
             }
         }
-        if (LOWORD(wParam) == 2 && !moving)
+        if (LOWORD(wParam) == 2)
         {
-            ksztalt = 0;
+            if (!movingright)
+            {
+                movingright = true;
+                movingleft = false;
+                movingup = false;
+                movingdown = false;
+                SetTimer(hwnd, 1, 1, nullptr);
+            }
         }
-        if (LOWORD(wParam) == 3 && !moving)
+        if (LOWORD(wParam) == 3)
         {
-            ksztalt = 1;
+            if (!movingup)
+            {
+                movingup = true;
+                movingleft = false;
+                movingright = false;
+                movingdown = false;
+                SetTimer(hwnd, 1, 1, nullptr);
+            }
+        }
+        if (LOWORD(wParam) == 4)
+        {
+            if (!movingdown)
+            {
+                movingdown = true;
+                movingup = false;
+                movingleft = false;
+                movingright = false;
+                SetTimer(hwnd, 1, 1, nullptr);
+            }
+        }
+        if (LOWORD(wParam) == 5)
+        {
+            ksztalt.push_back(1);
+            objekty.push_back(nowy);
+            ktory = objekty.size() - 1;
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (LOWORD(wParam) == 6)
+        {
+            ksztalt.push_back(0);
+            objekty.push_back(nowy);
+            ktory = objekty.size() - 1;
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (LOWORD(wParam) == 7)
+        {
+            ksztalt.push_back(2);
+            objekty.push_back(nowy);
+            ktory = objekty.size() - 1;
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (LOWORD(wParam) == 8)
+        {
+            ksztalt.push_back(0);
+            objekty.push_back(nowy);
+            ktory = objekty.size() - 1;
+            wieza_ktk = true;
+            SetTimer(hwnd, 1, 1, nullptr);
+        }
+        if (LOWORD(wParam) == 9)
+        {
+            ksztalt.push_back(1);
+            objekty.push_back(nowy);
+            ktory = objekty.size() - 1;
+            wieza_kkt = true;
+            SetTimer(hwnd, 1, 1, nullptr);
         }
         break;
     }
     break;
     case WM_TIMER:
-        if (moving) {
-            objekt.left -= 2;
-            objekt.right -= 2;
+    {
+        RECT& klocek = objekty[ktory];
 
-            if (objekt.left <= 180) {
+        if (movingleft && !movingright && !movingup && !movingdown) {
+
+            if (klocek.left <= 180) {
                 KillTimer(hwnd, 1);
-                moving = false;
+                movingleft = false;
+            }
+            else
+            {
+                klocek.left -= 4;
+                klocek.right -= 4;
             }
 
             InvalidateRect(hwnd, nullptr, TRUE);
         }
+        if (movingright && !movingleft && !movingup && !movingdown) {
+
+            if (klocek.right >= 305) {
+                KillTimer(hwnd, 1);
+                movingright = false;
+            }
+            else
+            {
+                klocek.left += 4;
+                klocek.right += 4;
+            }
+
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (movingup && !movingleft && !movingright && !movingdown) {
+
+            if (klocek.top <= 135) {
+                KillTimer(hwnd, 1);
+                movingup = false;
+            }
+            else
+            {
+                klocek.top -= 4;
+                klocek.bottom -= 4;
+            }
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (movingdown && !movingup && !movingleft && !movingright) {
+
+            if (klocek.bottom >= 345) {
+                KillTimer(hwnd, 1);
+                movingdown = false;
+            }
+            else
+            {
+                klocek.top += 4;
+                klocek.bottom += 4;
+            }
+
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        if (wieza_ktk == true || wieza_kkt == true)
+        {
+            bool up = false;
+            bool left = false;
+            bool down = false;
+            if (klocek.top > 135 && klocek.right > 220)
+            {
+                if (up == false && left == false && down == false)
+                {
+                    klocek.top -= 4;
+                    klocek.bottom -= 4;
+                }
+            }
+            else
+            {
+                up = true;
+            }
+            if (klocek.left > 180)
+            {
+                if (left == false && up == true && down == false)
+                {
+                    klocek.right -= 4;
+                    klocek.left -= 4;
+                }
+            }
+            else
+            {
+                left = true;
+            }
+            if (klocek.bottom < 345 && klocek.right < 220 && (wieza_1 == false || klocek.bottom < objekty[ktory - 1].top))
+            {
+                if (down == false && up == true && left == true)
+                {
+                    klocek.top += 4;
+                    klocek.bottom += 4;
+                }
+            }
+            else
+            {
+                down = true;
+            }
+            if (up == true && left == true && down == true)
+            {
+                RECT nowy = { 285, 320, 310, 345 };
+                if (wieza_2 == true)
+                    wieza_3 = true;
+                if (wieza_1 == true && wieza_2 == false)
+                {
+                    if (wieza_ktk == true)
+                        ksztalt.push_back(1);
+                    else if (wieza_kkt == true)
+                        ksztalt.push_back(2);
+                    objekty.push_back(nowy);
+                    ktory = objekty.size() - 1;
+                    wieza_2 = true;
+                    up = false;
+                    left = false;
+                    down = false;
+                }
+                if (wieza_1 == false)
+                {
+                    if (wieza_ktk == true)
+                        ksztalt.push_back(2);
+                    else if (wieza_kkt == true)
+                        ksztalt.push_back(0);
+                    objekty.push_back(nowy);
+                    ktory = objekty.size() - 1;
+                    wieza_1 = true;
+                    up = false;
+                    left = false;
+                    down = false;
+                }
+            }
+            if (wieza_1 == true && wieza_2 == true && wieza_3 == true)
+            {
+                KillTimer(hwnd, 1);
+                wieza_ktk = false;
+                wieza_kkt = false;
+                wieza_1 = false;
+                wieza_2 = false;
+                wieza_3 = false;
+                up = false;
+                left = false;
+                down = false;
+            }
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+    }
         break;
     case WM_PAINT:
     {
@@ -76,8 +287,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         graphics.DrawLine(&penw, 160, 100, 220, 125);
         graphics.DrawLine(&penw, 160, 100, 280, 125);
 
-
-
         for (int i = 0; i < 4; i++)
         {
             graphics.DrawRectangle(&penw, 90 - 10 * i, 115, 10, 30);
@@ -103,26 +312,40 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         graphics.FillClosedCurve(&bruh, kabina, 5, FillModeAlternate, 0);
         graphics.DrawClosedCurve(&penr, kabina, 5, 0);
 
+        for (int i = 0; i < objekty.size(); i++)
+        {
+            RECT &objekt = objekty[i];
+            RECT &linka = objekty[ktory];
+            graphics.DrawLine(&penw, (linka.left + linka.right) / 2, 135, (linka.left + linka.right) / 2, linka.top);
 
-        switch (ksztalt) {
-        case 0:
-        {
-            graphics.FillRectangle(&bruh,
-                static_cast<INT>(objekt.left),
-                static_cast<INT>(objekt.top),
-                static_cast<INT>(objekt.right - objekt.left),
-                static_cast<INT>(objekt.bottom - objekt.top));
-        }
-        break;
-        case 1:
-        {
-            graphics.FillEllipse(&bruh,
-                static_cast<INT>(objekt.left),
-                static_cast<INT>(objekt.top),
-                static_cast<INT>(objekt.right - objekt.left),
-                static_cast<INT>(objekt.bottom - objekt.top));
-        }
-        break;
+            switch (ksztalt[i]) {
+            case 0:
+            {
+                graphics.FillRectangle(&bruh,
+                    static_cast<INT>(objekt.left),
+                    static_cast<INT>(objekt.top),
+                    static_cast<INT>(objekt.right - objekt.left),
+                    static_cast<INT>(objekt.bottom - objekt.top));
+            }
+            break;
+            case 1:
+            {
+                graphics.FillEllipse(&bruh,
+                    static_cast<INT>(objekt.left),
+                    static_cast<INT>(objekt.top),
+                    static_cast<INT>(objekt.right - objekt.left),
+                    static_cast<INT>(objekt.bottom - objekt.top));
+            }
+            break;
+            case 2:
+            {
+                Point trojkat[] = { Point((objekt.left + objekt.right) / 2, objekt.top),
+                              Point(objekt.left, objekt.bottom),
+                              Point(objekt.right, objekt.bottom), };
+                graphics.FillClosedCurve(&bruh, trojkat, 3, FillModeAlternate, 0);
+            }
+            break;
+            }
         }
         EndPaint(hwnd, &ps);
     }
@@ -156,19 +379,49 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         L"BUTTON",
         L"left",
         WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-        20, 20, 50, 50,
+        20, 40, 25, 25,
         hwnd,
         (HMENU)1,
         (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
         NULL);
 
-    HWND kolko= CreateWindow(
+    HWND right = CreateWindow(
+        L"BUTTON",
+        L"right",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        100, 40, 25, 25,
+        hwnd,
+        (HMENU)2,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND up= CreateWindow(
+        L"BUTTON",
+        L"up",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        60, 10, 25, 25,
+        hwnd,
+        (HMENU)3,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND down = CreateWindow(
+        L"BUTTON",
+        L"down",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        60, 70, 25, 25,
+        hwnd,
+        (HMENU)4,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND kolko = CreateWindow(
         L"BUTTON",
         L"kolko",
         WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-        80, 20, 50, 50,
+        140, 10, 60, 25,
         hwnd,
-        (HMENU)2,
+        (HMENU)5,
         (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
         NULL);
 
@@ -176,9 +429,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
         L"BUTTON",
         L"kwadrat",
         WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-        140, 20, 50, 50,
+        200, 10, 60, 25,
         hwnd,
-        (HMENU)3,
+        (HMENU)6,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND trojkat = CreateWindow(
+        L"BUTTON",
+        L"trojkat",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        260, 10, 60, 25,
+        hwnd,
+        (HMENU)7,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND wieza_ktk = CreateWindow(
+        L"BUTTON",
+        L"wieza_ktk",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        140, 40, 80, 25,
+        hwnd,
+        (HMENU)8,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL);
+
+    HWND wieza_kkt = CreateWindow(
+        L"BUTTON",
+        L"wieza_kkt",
+        WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        220, 40, 80, 25,
+        hwnd,
+        (HMENU)9,
         (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
         NULL);
 
